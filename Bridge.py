@@ -1,6 +1,7 @@
 ### author: Roberto Vezzani
 
 import serial
+from datetime import datetime
 import numpy as np
 import urllib.request
 
@@ -19,7 +20,9 @@ class Bridge():
 
         # buffer that contains the bpm received from the microcontroller
         self.bpm_buffer = []
-        self.bpm_counter = []
+
+        # variable used to keep track of the last time a BPM has been received
+        self.lasttime = datetime.now()
 
 
     def loop(self):
@@ -51,6 +54,8 @@ class Bridge():
         for i in range (numval):
             val = int.from_bytes(self.inbuffer[i+2], byteorder='little')
             if val > 20:
+                if (datetime.now() - self.lasttime).total_seconds() > 180:
+                    self.bpm_buffer = []
                 self.bpm_buffer.append(val)
             strval = "Sensor %d: %d " % (i, val)
             print(strval)
