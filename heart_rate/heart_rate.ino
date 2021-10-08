@@ -42,6 +42,7 @@ byte counter = 0;
 
 float beatsPerMinute;
 int beatAvg;
+int erase = 0;
 
 unsigned long lasttime;
 int iReceived;
@@ -111,9 +112,17 @@ void loop()
 
   if (irValue < 50000){
     //Serial.print(" No finger?");
+    beatsPerMinute = 0;
+    beatAvg = 0;
     lcd.clear();
     lcd.setCursor(0,0);
     lcd.print("No finger?");
+    if (erase == 1){
+      Serial.write(0xff);
+      Serial.write(0x00);
+      Serial.write(0xfe);
+    }
+    erase = 0;
   } else {
     lcd.clear();
     lcd.setCursor(0,0);
@@ -129,6 +138,7 @@ void loop()
       Serial.write((char)(beatAvg));
       Serial.write(0xfe);
     }
+    erase = 1;
   }
 
  
