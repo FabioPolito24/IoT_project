@@ -123,6 +123,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATIC_ROOT = '/home/Fabioiot/IoT_project/backend/static'
+
 # we whitelist localhost:3000 because that's where frontend will be served
 '''
 CORS_ORIGIN_WHITELIST = [
