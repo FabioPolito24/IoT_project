@@ -5,12 +5,8 @@ from todo import views
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserView, 'user')
-router.register(r'surveys', views.SurveyView, 'survey')
-router.register(r'questions', views.QuestionView, 'question')
-router.register(r'answers', views.AnswerView, 'answers')
-router.register(r'submissions', views.SubmissionView, 'submissions')
-router.register(r'submittedAnswers', views.SubmittedAnswerView, 'submittedAnswers')
 router.register(r'measurements', views.MeasurementView, 'measurements')
+router.register(r'tags', views.TagView, 'tag')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

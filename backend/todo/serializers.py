@@ -1,7 +1,5 @@
 from rest_framework import serializers
-from .models import User, Survey, Question, Answer, Submission, SubmittedAnswer, Measurement
-import string
-import random
+from .models import User, Measurement, Tag
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -16,12 +14,18 @@ class MeasurementSerializer(serializers.ModelSerializer):
     fields = ('id', 'date', 'time', 'type', 'value', 'user')
 
 
+class TagSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Tag
+    fields = ('id', 'date', 'time', 'value', 'user')
+
+
+'''
 class SurveySerializer(serializers.ModelSerializer):
 
   class Meta:
     model = Survey
     fields = ('id', 'startDate', 'title', 'code', 'status', 'visibility', 'description', 'createdBy')
-
   def to_representation(self, instance):
     data = super(SurveySerializer, self).to_representation(instance)
     username = getattr(User.objects.get(pk=data.get('createdBy')), 'username')
@@ -37,35 +41,4 @@ class SurveySerializer(serializers.ModelSerializer):
 
     validated_data['code'] = code
     return Survey.objects.create(**validated_data)
-
-
-class QuestionSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = Question
-    fields = ('id', 'question', 'type', 'survey', 'index')
-
-
-class AnswerSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = Answer
-    fields = ('id', 'question', 'answer')
-
-
-class SubmissionSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = Submission
-    fields = ('id', 'date', 'user', 'survey')
-
-  def to_representation(self, instance):
-    data = super(SubmissionSerializer, self).to_representation(instance)
-    data.update({
-      'username': getattr(User.objects.get(pk=data.get('user')), 'username'),
-      'code': getattr(Survey.objects.get(pk=data.get('survey')), 'code'),
-      'title': getattr(Survey.objects.get(pk=data.get('survey')), 'title')
-    })
-    return data
-
-class SubmittedAnswerSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = SubmittedAnswer
-    fields = ('id', 'submission', 'question', 'answer', 'survey')
+'''
