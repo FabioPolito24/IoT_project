@@ -18,5 +18,5 @@ class Measurement(models.Model):
 class Tag(models.Model):
     date = models.DateField()
     time = models.TimeField()
-    value = models.IntegerField()
+    value = models.CharField(max_length=120)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
