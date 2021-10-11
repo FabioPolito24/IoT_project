@@ -5,6 +5,7 @@ from datetime import datetime
 import numpy as np
 import urllib.request
 import requests
+import threading
 
 ## configuration
 PORTNAME = 'COM3'
@@ -46,24 +47,30 @@ class Bridge():
                     self.inbuffer.append(lastchar)
 
     def sendBpm(self, bpm):
+        print("inside sendBpm")
         now = datetime.now()
         date = now.strftime("%Y-%m-%d")
         time = now.strftime("%H:%M:%S")
         type = "H"
-        value = bpm
+        value = round(bpm)
         user = self.userID
 
         payload = {'date': date, 'time': time, 'type': type, 'value': value, 'user': user}
-        url = 'https://fabioiot.pythonanywhere.com/api'
+        url = 'https://fabioiot.pythonanywhere.com/api/measurements/'
         try:
-            r = requests.post(url, data=payload, timeout=10)
-            # r = requests.post(url, data=json.dumps(payload), timeout=10) use this if the API need json
+            r = requests.post(url, data=payload, timeout=60)
+            # r = requests.post(url, data=json.dumps(payload), timeout=10) # use this if the API need json
             print('-' * 10)
-            print(r.text)
+            print(r.json())
             print(r.status_code)
             print('-' * 10)
         except:
             print("Server non raggiungibile")
+            print('-' * 10)
+            print(r.status_code)
+            print('-' * 10)
+
+        return r.status_code
 
     def useData(self):
         # I have received a line from the serial port. I can use it
@@ -92,7 +99,9 @@ class Bridge():
                     avg_bpm += bpm
                 avg_bpm /= 10
                 print("the mean of BPM is " + str(avg_bpm))
-                self.sendBpm(avg_bpm)
+                # self.sendBpm(avg_bpm)
+                t = threading.Thread(target=self.sendBpm, args=[avg_bpm])
+                t.start()
                 self.ser.write(b'g')
                 self.bpm_buffer = []
 
