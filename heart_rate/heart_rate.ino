@@ -155,5 +155,4 @@ void loop()
     digitalWrite(4, LOW);
   }
   
-  //Serial.println();
 }
