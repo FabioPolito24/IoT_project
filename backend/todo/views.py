@@ -30,7 +30,7 @@ class TagView(viewsets.ModelViewSet):
             else:
                 queryset = queryset.filter(**{name: value})
 
-        return queryset
+        return queryset[:limit]
 
 
 class MeasurementView(viewsets.ModelViewSet):
@@ -46,7 +46,7 @@ class MeasurementView(viewsets.ModelViewSet):
             else:
                 queryset = queryset.filter(**{name: value})
 
-        return queryset
+        return queryset[:limit]
 
 
 '''
