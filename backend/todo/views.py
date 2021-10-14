@@ -105,6 +105,6 @@ def LoginView(request):
 @csrf_exempt
 def TestDeleteView(request):
     data = request.GET
-    total = Measurement.objects.filter(date=data["date"]).delete()
+    total = Measurement.objects.filter(date=data["date"], type='G').delete()
 
     return JsonResponse({"success": True, "Date": data["date"], "Total": total[0]})
