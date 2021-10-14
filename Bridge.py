@@ -70,8 +70,14 @@ class Bridge():
         # buffer that contains the bpm received from the microcontroller
         self.bpm_buffer = []
 
+        # delete the glucose data relative to the current day to avoid inconsistencies
+        # url = f'https://fabioiot.pythonanywhere.com/api/measurements/?date={date}'
+        # r = requests.delete(url)
+        # print(r.text)
+        # print(r.status_code)
+
         # start the periodic sending of glucose data
-        self.rt = RepeatedTimer(60, self.sendGlucose, 0, self.date)
+        self.rt = RepeatedTimer(300, self.sendGlucose, 0, self.date)
 
     def loop(self):
         # infinite loop
