@@ -24,6 +24,13 @@ class TagView(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Tag.objects.all()
         limit = 50
+
+        if 'tag' in self.request.query_params:
+           tags = Tag.objects.filter(value__icontains=self.request.query_params['tag'])
+           dates = [t.date for t in tags]
+           queryset = queryset.filter(date__in=dates)
+           return queryset[:limit]
+
         for name, value in self.request.query_params.items():
             if name == "limit":
                 limit = int(value)
