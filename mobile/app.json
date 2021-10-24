@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "Blo.",
+    "slug": "mobile",
+    "version": "1.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/i2.png",
+    "splash": {
+      "image": "./assets/i2.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#00ffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/i2.png",
+        "backgroundColor": "#00FFFF"
+      },
+      "package": "salva.test"
+    },
+    "web": {
+      "favicon": "./assets/i2.png"
+    }
+  }
+}
