@@ -9,6 +9,7 @@ import Login from './src/components/Login';
 import Signup from './src/components/Signup';
 import ControlScreen from './src/components/ControlScreen';
 import AddTag from './src/components/AddTag';
+import Predict from './src/components/Predict';
 
 
 //Define your routes using createStackNavigator, which will be a object full of options.
@@ -19,6 +20,7 @@ const RootStack = createStackNavigator({
     'Sign up': {screen: Signup},
     'Control screen': {screen: ControlScreen},
     'Add tag': {screen: AddTag},
+    'Predict': {screen: Predict},
   },
   {
     initialRouteName:  'Home'

@@ -4,7 +4,6 @@ import { Card, ListItem, Icon, Badge, SearchBar } from 'react-native-elements'
 import CalendarPicker from 'react-native-calendar-picker';
 import PlotGlucose from './PlotGlucose';
 import PlotHeartbeat from './PlotHeartbeat';
-import PlotInsulin from './PlotInsulin';
 import ViewTags from './ViewTags';
 import GLOBALS from './Globals';
 
@@ -189,7 +188,7 @@ class Home extends PureComponent {
                     <Text style={styles.controlText}>Add tag</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.controlButton}
-                    onPress={() => this.props.navigation.navigate("My surveys", {surveys: this.state.surveys, submissions: this.state.submissions})}>
+                    onPress={() => this.props.navigation.navigate("Predict")}>
                     <Icon
                     iconProps={{size:20}}
                     type="font-awesome"

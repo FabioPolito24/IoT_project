@@ -12,7 +12,7 @@ export default class PlotGlucose extends PureComponent {
         }
     }
     render() {
-        const data = this.props.data.sort((a,b) => (a.time > b.time) ? 1 : ((b.time > a.time) ? -1 : 0))
+        let data = this.props.data.sort((a,b) => (a.time > b.time) ? 1 : ((b.time > a.time) ? -1 : 0))
 
         if (data.length == 0){
             return (
@@ -30,7 +30,7 @@ export default class PlotGlucose extends PureComponent {
         }
         let unique_dates = [...new Set(data.map(item => item.date))]
         unique_dates = unique_dates.sort()
-        let times = [...new Set(data.map(s => s.time.slice(0,2)))]
+        let times = [...new Set(data.map(s => s.time.slice(0,2)))].sort()
         const step = Math.floor(times.length/6)
 
         for (var i = 0; i < times.length; ++i){

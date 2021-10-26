@@ -8,7 +8,7 @@
     "splash": {
       "image": "./assets/i2.png",
       "resizeMode": "contain",
-      "backgroundColor": "#00ffff"
+      "backgroundColor": "#FFFFFF"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -22,7 +22,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/i2.png",
-        "backgroundColor": "#00FFFF"
+        "backgroundColor": "#FFFFFF"
       },
       "package": "salva.test"
     },

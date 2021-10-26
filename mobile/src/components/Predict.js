@@ -1,12 +1,13 @@
 //import React form react
 import React, { PureComponent } from 'react';
-import { View, Text, Button, Image, StyleSheet, TextInput, Alert, Dimensions, Picker, ScrollView } from 'react-native';
+import { View, Text, Button, Image, StyleSheet, AsyncStorage, TextInput, Alert, Dimensions, Picker, ScrollView } from 'react-native';
 import { Card, ListItem, Icon, Badge, SearchBar } from 'react-native-elements'
 import CalendarPicker from 'react-native-calendar-picker';
 import GLOBALS from './Globals';
+import PlotPrediction from './PlotPrediction';
 
 
-class AddTag extends PureComponent {
+class Predict extends PureComponent {
     constructor(props){
         super(props)
         Date.prototype.addHours= function(h){
@@ -17,18 +18,21 @@ class AddTag extends PureComponent {
         this.onDateChange = this.onDateChange.bind(this)
         this.onHourChange = this.onHourChange.bind(this)
         this.onMinuteChange = this.onMinuteChange.bind(this)
-        this.onValueChange = this.onValueChange.bind(this)
-        this.submit = this.submit.bind(this)
         this.state = {
             date: now.slice(0,10),
             hour: now.slice(11, 13),
             minute: now.slice(14, 16),
-            value: '',
+            loading: true,
+            measurements: [],
         }
     }
-    onDateChange(date) {
+    async onDateChange(date) {
         date = date.format('YYYY-MM-DD')
-        this.setState({date: date})
+        const measurements = await this.getMeasurements(date)
+        this.setState({
+            date: date,
+            measurements: measurements,
+        });
     }
     onHourChange(h) {
         this.setState({hour: h})
@@ -36,36 +40,29 @@ class AddTag extends PureComponent {
     onMinuteChange(m) {
         this.setState({minute: m})
     }
-    onValueChange(v) {
-        this.setState({value: v})
+    async getMeasurements(date){
+        var TARGET = 'measurements/?user=1'
+        var PARAMS = ''
+        const userId = await AsyncStorage.getItem('userId');
+        const time_lt = this.state.hour+":"+this.state.minute+":00"
+        const time_gt = String(parseInt(this.state.hour) - 3)+":00:00"
+        PARAMS += '&date='+date + '&time__lte='+time_lt + '&time__gte='+time_gt
+        var response = await fetch(GLOBALS.API_ENDPOINT+TARGET+PARAMS);
+        const measurements = await response.json();
+        return measurements
     }
-    async submit(){
-        if (!this.state.value){
-            Alert.alert("Please insert a tag value")
-            return
+    async componentDidMount(){
+        const measurements = await this.getMeasurements(this.state.date, null)
+        try {
+            this.setState({measurements: measurements, loading: false});
+        } catch(err) {
+            console.log("Error fetching data-----------", err);
         }
-        var response = await fetch(GLOBALS.API_ENDPOINT+'/tags/', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                date: this.state.date,
-                time: this.state.hour+':'+this.state.minute,
-                value: this.state.value,
-                user: 1
-            })
-        });
-        Alert.alert("Tag saved!")
-
     }
     render(){
         const hours = Array(24).fill(null).map((u, i) => String(i).padStart(2, "0"))
         let minutes = Array(4).fill(null).map((u, i) => String(i*15).padStart(2, "0"))
-        if ((this.state.minute % 15) != 0){
-            minutes.push(this.state.minute)
-        }
+
         return (
             <ScrollView>
             <Card>
@@ -105,15 +102,13 @@ class AddTag extends PureComponent {
                             </Picker>
                         </View>
                 </View>
-                <Text style={styles.label}>Insert tag</Text>
-                <TextInput placeholder=""  style={styles.input} onChangeText={this.onValueChange} />
-                <Card.Divider />
-				<Button
-                    color={GLOBALS.COLOR.MAIN}
-                     onPress={this.submit}
-                     title="SUBMIT"
-                   />
             </Card>
+            <View style={styles.chart}>
+                    <PlotPrediction
+                    data={this.state.measurements.filter((e) => e.type == "G")}
+                    predictions={1}
+                    />
+            </View>
 
             </ScrollView>
         )
@@ -155,6 +150,9 @@ const styles = StyleSheet.create({
               { scaleY: 1.5 },
            ],
     },
+    chart:{
+        flex: 5
+    },
 })
 
-export default AddTag;
+export default Predict;

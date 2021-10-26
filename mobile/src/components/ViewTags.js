@@ -32,7 +32,7 @@ export default class ViewTags extends PureComponent {
                                 type="font-awesome"
                                 name='flask'
                                 color={GLOBALS.COLOR.SECONDARY} />&nbsp;
-                                {' '.repeat(s.value) + String(s.value) + 'u'}
+                                {String(s.value) + 'u'}
                                 </Text>
                                 ):(
                                 <Text>
