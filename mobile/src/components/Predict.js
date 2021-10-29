@@ -1,6 +1,6 @@
 //import React form react
 import React, { PureComponent } from 'react';
-import { View, Text, Button, Image, StyleSheet, AsyncStorage, TextInput, Alert, Dimensions, Picker, ScrollView } from 'react-native';
+import { View, Text, Button, Image, StyleSheet, AsyncStorage, TextInput, Alert, Dimensions,ActivityIndicator, Picker, ScrollView } from 'react-native';
 import { Card, ListItem, Icon, Badge, SearchBar } from 'react-native-elements'
 import CalendarPicker from 'react-native-calendar-picker';
 import GLOBALS from './Globals';
@@ -18,6 +18,7 @@ class Predict extends PureComponent {
         this.onDateChange = this.onDateChange.bind(this)
         this.onHourChange = this.onHourChange.bind(this)
         this.onMinuteChange = this.onMinuteChange.bind(this)
+
         this.state = {
             date: now.slice(0,10),
             hour: now.slice(11, 13),
@@ -28,25 +29,38 @@ class Predict extends PureComponent {
     }
     async onDateChange(date) {
         date = date.format('YYYY-MM-DD')
+        const w = await this.setState({loading: true})
         const measurements = await this.getMeasurements(date)
         this.setState({
             date: date,
             measurements: measurements,
+            loading: false
         });
     }
-    onHourChange(h) {
-        this.setState({hour: h})
+    async onHourChange(h) {
+        const w = await this.setState({hour: h, loading: true})
+        const measurements = await this.getMeasurements(this.state.date)
+        this.setState({
+            measurements: measurements,
+            loading: false
+        });
     }
-    onMinuteChange(m) {
-        this.setState({minute: m})
+    async onMinuteChange(m) {
+        const w = await this.setState({minute: m, loading: true})
+        const measurements = await this.getMeasurements(this.state.date)
+        this.setState({
+            measurements: measurements,
+            loading: false
+        });
     }
     async getMeasurements(date){
-        var TARGET = 'measurements/?user=1'
+        var TARGET = 'measurements/?user=1&type=G'
         var PARAMS = ''
         const userId = await AsyncStorage.getItem('userId');
         const time_lt = this.state.hour+":"+this.state.minute+":00"
-        const time_gt = String(parseInt(this.state.hour) - 3)+":00:00"
+        const time_gt = String(parseInt(this.state.hour) - 3)+":"+this.state.minute+":00"
         PARAMS += '&date='+date + '&time__lte='+time_lt + '&time__gte='+time_gt
+        console.log(PARAMS)
         var response = await fetch(GLOBALS.API_ENDPOINT+TARGET+PARAMS);
         const measurements = await response.json();
         return measurements
@@ -62,8 +76,22 @@ class Predict extends PureComponent {
     render(){
         const hours = Array(24).fill(null).map((u, i) => String(i).padStart(2, "0"))
         let minutes = Array(4).fill(null).map((u, i) => String(i*15).padStart(2, "0"))
+        if ((this.state.minute % 15) != 0){
+            minutes.push(this.state.minute)
+        }
 
         return (
+            <>
+            {this.state.loading == true ? (
+                <View style={styles.loader}>
+                    <Card>
+                        <Text style={{color: GLOBALS.COLOR.MAIN, fontSize: 30}}>
+                            <ActivityIndicator size="large" color={GLOBALS.COLOR.MAIN} />
+                            {'  '}Loading...
+                        </Text>
+                    </Card>
+                </View>
+            ) : null}
             <ScrollView>
             <Card>
                 <Text style={styles.label}>Select date</Text>
@@ -111,6 +139,7 @@ class Predict extends PureComponent {
             </View>
 
             </ScrollView>
+            </>
         )
     }
 }
@@ -149,6 +178,12 @@ const styles = StyleSheet.create({
               { scaleX: 1.5 },
               { scaleY: 1.5 },
            ],
+    },
+    loader: {
+        position:'absolute',
+        bottom: 300,
+        left: 50,
+        alignSelf:'flex-end'
     },
     chart:{
         flex: 5

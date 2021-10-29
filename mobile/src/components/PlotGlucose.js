@@ -104,29 +104,29 @@ export default class PlotGlucose extends PureComponent {
                 </Text>
                <View>
                     <View style={{flexDirection: 'row',}}>
-                          <View style={{flex: 1}}>
-                            <Text>Date</Text>
+                          <View style={{flex:1, textAlign: 'center', margin:2, padding:5, borderRadius: 5, backgroundColor: GLOBALS.COLOR.SECONDARY_BG[i] }}>
+                            <Text style={{textAlign:'right'}}>Date</Text>
                           </View>
-                          <View style={{flex: 1}}>
-                               <Text>Average (mg/dL)</Text>
+                          <View style={{flex:1, textAlign: 'center', margin:2, padding:5, borderRadius: 5, backgroundColor: GLOBALS.COLOR.SECONDARY_BG[i] }}>
+                               <Text style={{textAlign:'center'}}>AVG (mg/dL)</Text>
                           </View>
-                          <View style={{flex: 1}}>
-                              <Text>Time in range</Text>
+                          <View style={{flex:1, textAlign: 'center', margin:2, padding:5, borderRadius: 5, backgroundColor: GLOBALS.COLOR.SECONDARY_BG[i] }}>
+                              <Text style={{textAlign:'center'}}>Time in range</Text>
                           </View>
                     </View>
                     {
                         averages.map((s, i) => {
                             return (
                                 <View key={i}
-                                style={{margin:0,  flexDirection: 'row', backgroundColor: GLOBALS.COLOR.BG_SCALE[i]}}>
-                                  <View style={{flex: 1}}>
-                                      <Text>{s.date}</Text>
+                                style={{margin:0,  flexDirection: 'row'}}>
+                                  <View style={{flex:1, textAlign: 'center', margin:2, padding:5, borderRadius: 5, backgroundColor: GLOBALS.COLOR.BG_SCALE[i] }}>
+                                      <Text style={{textAlign:'right'}}>{s.date}</Text>
                                     </View>
-                                    <View style={{flex: 1}}>
-                                         <Text>{s.avg}</Text>
+                                    <View style={{flex:1, textAlign: 'center', margin:2, padding:5, borderRadius: 5, backgroundColor: GLOBALS.COLOR.BG_SCALE[i] }}>
+                                         <Text style={{textAlign:'center'}}>{s.avg}</Text>
                                     </View>
-                                    <View style={{flex: 1}}>
-                                        <Text>{s.tir}%</Text>
+                                    <View style={{flex:1, textAlign: 'center', margin:2, padding:5, borderRadius: 5, backgroundColor: GLOBALS.COLOR.BG_SCALE[i] }}>
+                                        <Text style={{textAlign:'center'}}>{s.tir}%</Text>
                                     </View>
                               </View>
                            )

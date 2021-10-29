@@ -128,35 +128,35 @@ export default class PlotHeartbeat extends PureComponent {
                     &nbsp;Heartbeat
                     </Text>
                             <View style={{flexDirection: 'row',}}>
-                                  <View style={{flex: 1}}>
-                                    <Text>Date</Text>
+                                  <View style={{flex:3, textAlign: 'center', margin:2, padding:5, borderRadius: 5 }}>
+                                    <Text style={{textAlign:'right'}}>Date</Text>
                                   </View>
-                                  <View style={{flex: 1}}>
-                                       <Text>AVG (bpm)</Text>
+                                  <View style={{flex:2, textAlign: 'center', margin:2, padding:5, borderRadius: 5 }}>
+                                       <Text style={{textAlign:'center'}}>AVG</Text>
                                   </View>
-                                  <View style={{flex: 1}}>
-                                    <Text>MIN (bpm)</Text>
+                                  <View style={{flex:2, textAlign: 'center', margin:2, padding:5, borderRadius: 5 }}>
+                                    <Text style={{textAlign:'center'}}>MIN</Text>
                                 </View>
-                                  <View style={{flex: 1}}>
-                                      <Text>MAX (bpm)</Text>
+                                  <View style={{flex:2, textAlign: 'center', margin:2, padding:5, borderRadius: 5 }}>
+                                      <Text style={{textAlign:'center'}}>MAX</Text>
                                   </View>
                             </View>
                             {
                                 insights.map((s, i) => {
                                     return (
                                         <View key={i}
-                                        style={{margin:0,  flexDirection: 'row', backgroundColor: GLOBALS.COLOR.BG_SCALE[i]}}>
-                                          <View style={{flex: 1}}>
-                                              <Text>{s.date}</Text>
+                                        style={{margin:0,  flexDirection: 'row'}}>
+                                          <View style={{flex:3, textAlign: 'center', margin:2, padding:5, borderRadius: 5, backgroundColor: GLOBALS.COLOR.BG_SCALE[i] }}>
+                                              <Text style={{textAlign:'right'}}>{s.date}</Text>
                                             </View>
-                                            <View style={{flex: 1}}>
-                                                 <Text>{s.avg}</Text>
+                                            <View style={{flex:2, textAlign: 'center', margin:2, padding:5, borderRadius: 5, backgroundColor: GLOBALS.COLOR.BG_SCALE[i] }}>
+                                                 <Text style={{textAlign:'center'}}>{s.avg}</Text>
                                             </View>
-                                            <View style={{flex: 1}}>
-                                                <Text>{s.min}</Text>
+                                            <View style={{flex:2, textAlign: 'center', margin:2, padding:5, borderRadius: 5, backgroundColor: GLOBALS.COLOR.BG_SCALE[i] }}>
+                                                <Text style={{textAlign:'center'}}>{s.min}</Text>
                                             </View>
-                                            <View style={{flex: 1}}>
-                                                <Text>{s.max}</Text>
+                                            <View style={{flex:2, textAlign: 'center', margin:2, padding:5, borderRadius: 5, backgroundColor: GLOBALS.COLOR.BG_SCALE[i] }}>
+                                                <Text style={{textAlign:'center'}}>{s.max}</Text>
                                             </View>
                                       </View>
                                    )

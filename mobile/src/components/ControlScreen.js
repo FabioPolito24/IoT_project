@@ -84,6 +84,7 @@ class Home extends PureComponent {
         this.props.navigation.navigate("Home")
     }
     async onDateChange(date, type) {
+        const w = await this.setState({loading: true})
         date = date.format('YYYY-MM-DD')
         if (type === 'END_DATE') {
           if (date != this.state.startDate){
@@ -103,14 +104,16 @@ class Home extends PureComponent {
             startDate: date,
             endDate: null,
             measurements: measurements,
-            tags: tags
+            tags: tags,
+            loading: false
           });
         }
       }
     render() {
-        if (this.state.loading == true){
-            return (
-                <View style={styles.info}>
+        return (
+            <>
+            {this.state.loading == true ? (
+                <View style={styles.loader}>
                     <Card>
                         <Text style={{color: GLOBALS.COLOR.MAIN, fontSize: 30}}>
                             <ActivityIndicator size="large" color={GLOBALS.COLOR.MAIN} />
@@ -118,10 +121,7 @@ class Home extends PureComponent {
                         </Text>
                     </Card>
                 </View>
-            )
-        }
-        return (
-            <>
+            ) : null}
             <ScrollView style={styles.container}>
                 <View style={styles.info}>
                     <Card>
@@ -227,6 +227,12 @@ const styles = StyleSheet.create({
     info: {
         flex: 5,
         justifyContent: 'center'
+    },
+    loader: {
+        position:'absolute',
+        bottom: 300,
+        left: 50,
+        alignSelf:'flex-end'
     },
     infoTop: {
         flex: 5,

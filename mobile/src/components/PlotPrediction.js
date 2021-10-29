@@ -29,55 +29,85 @@ export default class PlotPrediction extends PureComponent {
             )
         }
 
-        let times = [...new Set(data.map(s => s.time.slice(0,5)))].sort()
-        const step = Math.floor(times.length/5)
-        let avg = 0
-        let sum = 0
-        let tir = 0
-        let values = []
+
         let datasets = []
-        let averages = []
         let legend = null
-        const boundaries = [0, 60, 250, 270]
+
+
+        let last_time = data[data.length - 1].time
+        let last_val = data[data.length - 1].value
+        let date_buf = new Date(2000, 0, 1, parseInt(last_time.slice(0,2)) + 1, last_time.slice(3,5))
+
         var i;
+
+        for (i = 1; i < 7; ++i){
+            date_buf = new Date(date_buf.getTime() + 5*60000)
+            console.log(date_buf.toISOString().slice(11,16))
+            data.push({
+                'time': date_buf.toISOString().slice(11,16),
+                'value': last_val
+            })
+        }
+
+        let times = [...new Set(data.map(s => s.time.slice(0,5)))].sort()
+        let values = data.map(s => s.value)
+        let pred_values = Array(values.length)
+        let data_pred = []
+
         for (i = 0; i < times.length; ++i){
-            if (i % step != 0){
+            if (i > times.length - 6){
+                values[i] = last_val
+                pred_values[i] = 200
+                data_pred.push({
+                    'time': times[i],
+                    'value': 200
+                })
+            }
+            else{
+                pred_values[i] = values[i]
+            }
+            if (i % 8 != 0){
                 times[i] = ""
             }
         }
 
-        values = data.map(s => s.value)
+        console.log(data_pred)
+
+        const boundaries = [0, 60, 250, 270]
+        var b;
+        for(var j=0; j<4; j++){
+            var color;
+            if (j == 0 | j == 3){
+                color = GLOBALS.COLOR.WHITE
+            }
+            else{
+                color = GLOBALS.COLOR.DANGER
+            }
+            if (j == 0){
+                b = Array(288).fill(null).map((u, i) => i)
+            }
+            else{
+                b = Array(288).fill(null).map((u, i) => boundaries[j])
+            }
+            datasets.push({
+                data: b,
+                fill: false,
+                color: new Function('name', 'return "'+color+'"')
+            })
+        }
+
         datasets.push({
             data: values,
             fill: false,
             color: new Function('name', 'return "'+GLOBALS.COLOR.SCALE[0]+'"')
         })
 
-        if (this.props.predictions == 1){
-            let buf = [...new Set(data.map(s => s.time))].sort()
-            let idx = 0
-            i = 0
+        datasets.push({
+            data: pred_values,
+            fill: true,
+            color: new Function('name', 'return "'+GLOBALS.COLOR.MAIN+'"')
+        })
 
-            while(idx == 0){
-                if (buf[i] >= '17:15:00'){
-                    idx = i
-                }
-                else{
-                    i += 1
-                }
-            }
-            let pred = [215, 215, 215, 215, 215, 215]
-
-            for(var j=0; j<6; j++){
-                values[idx+j] = pred[j]
-            }
-
-            datasets.push({
-                data: values,
-                fill: false,
-                color: new Function('name', 'return "'+GLOBALS.COLOR.MAIN+'"')
-            })
-        }
 
         return(
             <Card>
@@ -89,6 +119,34 @@ export default class PlotPrediction extends PureComponent {
                 color={GLOBALS.COLOR.MAIN} />
                 &nbsp;Prediction
                 </Text>
+                <View
+                    style={{margin:0,  flexDirection: 'row'}}>
+                      <View style={{flex:1, textAlign: 'center', margin:2, padding:5, borderRadius: 5, backgroundColor: GLOBALS.COLOR.BG_SCALE[0] }}>
+                          <Text style={{textAlign:'right'}}>Last</Text>
+                        </View>
+                        <View style={{flex:1, textAlign: 'center', margin:2, padding:5, borderRadius: 5, backgroundColor: GLOBALS.COLOR.BG_SCALE[0] }}>
+                             <Text style={{textAlign:'center'}}>{last_time.slice(0,5)}</Text>
+                        </View>
+                        <View style={{flex:1, textAlign: 'center', margin:2, padding:5, borderRadius: 5, backgroundColor: GLOBALS.COLOR.BG_SCALE[0] }}>
+                            <Text style={{textAlign:'center'}}>{last_val}</Text>
+                        </View>
+                  </View>
+              {data_pred.map((e,i) => {
+                return(
+                    <View key={i}
+                        style={{margin:0,  flexDirection: 'row'}}>
+                          <View style={{flex:1, textAlign: 'center', margin:2, padding:5, borderRadius: 5, backgroundColor: GLOBALS.COLOR.BG_SCALE[1] }}>
+                              <Text style={{textAlign:'right'}}>Pred</Text>
+                            </View>
+                            <View style={{flex:1, textAlign: 'center', margin:2, padding:5, borderRadius: 5, backgroundColor: GLOBALS.COLOR.BG_SCALE[1] }}>
+                                 <Text style={{textAlign:'center'}}>{e.time}</Text>
+                            </View>
+                            <View style={{flex:1, textAlign: 'center', margin:2, padding:5, borderRadius: 5, backgroundColor: GLOBALS.COLOR.BG_SCALE[1] }}>
+                                <Text style={{textAlign:'center'}}>{e.value}</Text>
+                            </View>
+                      </View>
+                )
+              })}
                <View style={{marginLeft: -25}}>
                <LineChart
                         bezier
@@ -100,7 +158,7 @@ export default class PlotPrediction extends PureComponent {
                             datasets: datasets,
                         }}
                         width={Dimensions.get("window").width - Dimensions.get("window").width*0.1} // from react-native
-                        height={Dimensions.get("window").height*0.3}
+                        height={Dimensions.get("window").height*0.32}
                         withShadow={false}
                         chartConfig={{
                             backgroundColor: '#ffffff',
