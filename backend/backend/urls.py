@@ -12,6 +12,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('api/login/', views.LoginView),
+    path('api/predict/', views.PredictView),
     path('api/test/', views.TestView),
     path('api/testdelete/', views.TestDeleteView)
 ]

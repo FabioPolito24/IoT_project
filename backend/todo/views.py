@@ -10,6 +10,8 @@ from .models import User, Measurement, Tag
 import json
 import random
 import string
+import pandas as pd
+from statsmodels.tsa.arima.model import ARIMA
 
 
 class UserView(viewsets.ModelViewSet):
@@ -81,6 +83,38 @@ class SurveyView(viewsets.ModelViewSet):
 
     return queryset
 '''
+
+def PredictView(request):
+    query_params = request.GET
+    queryset = Measurement.objects.all()
+
+    for name, value in query_params.items():
+        queryset = queryset.filter(**{name: value})
+        
+    df = pd.DataFrame([{
+        'ds': str(m.date) + ' ' + str(m.time),
+        'y': m.value
+    } for m in queryset])[::-1]
+    
+    df['ds'] = pd.to_datetime(df['ds'])
+    df = df.set_index('ds')
+    df.index = pd.DatetimeIndex(df.index).to_period('5T')
+    
+    model = ARIMA(df, order=(2,1,2))
+    model_fit = model.fit()
+    predictions = model_fit.forecast(6)
+    
+    measurements = [{
+        'time': m.time,
+        'value': m.value
+    } for m in queryset][::-1]
+    
+    predictions = [{
+        'time': str(index.to_timestamp())[11:],
+        'value': int(value)
+    } for index, value in predictions.items()]
+
+    return JsonResponse({"measurements": measurements, "predictions": predictions})
 
 
 def TestView(request):
