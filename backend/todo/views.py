@@ -91,6 +91,9 @@ def PredictView(request):
     for name, value in query_params.items():
         queryset = queryset.filter(**{name: value})
         
+    if len(queryset) < 36:
+        return JsonResponse({"measurements": [], "predictions": []})
+        
     df = pd.DataFrame([{
         'ds': str(m.date) + ' ' + str(m.time),
         'y': m.value
