@@ -29,22 +29,15 @@ export default class PlotPrediction extends PureComponent {
             )
         }
 
-
         let datasets = []
         let legend = null
-
-
         let last_time = data[data.length - 1].time
         let last_val = data[data.length - 1].value
-        let date_buf = new Date(2000, 0, 1, parseInt(last_time.slice(0,2)) + 1, last_time.slice(3,5))
-
         var i;
 
-        for (i = 1; i < 7; ++i){
-            date_buf = new Date(date_buf.getTime() + 5*60000)
-            console.log(date_buf.toISOString().slice(11,16))
+        for (i = 0; i < 6; ++i){
             data.push({
-                'time': date_buf.toISOString().slice(11,16),
+                'time': this.props.predictions[i].time,
                 'value': last_val
             })
         }
@@ -55,12 +48,16 @@ export default class PlotPrediction extends PureComponent {
         let data_pred = []
 
         for (i = 0; i < times.length; ++i){
-            if (i > times.length - 6){
+            if (i >= times.length -  this.props.predictions.length){
                 values[i] = last_val
-                pred_values[i] = 200
+                console.log(i)
+                console.log(times.length - i)
+                console.log(times[i])
+                console.log(this.props.predictions[times.length - i])
+                pred_values[i] = this.props.predictions[ this.props.predictions.length - (times.length - i)].value
                 data_pred.push({
                     'time': times[i],
-                    'value': 200
+                    'value': pred_values[i]
                 })
             }
             else{
@@ -70,8 +67,6 @@ export default class PlotPrediction extends PureComponent {
                 times[i] = ""
             }
         }
-
-        console.log(data_pred)
 
         const boundaries = [0, 60, 250, 270]
         var b;

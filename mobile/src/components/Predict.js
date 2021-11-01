@@ -33,7 +33,8 @@ class Predict extends PureComponent {
         const measurements = await this.getMeasurements(date)
         this.setState({
             date: date,
-            measurements: measurements,
+            measurements: measurements.measurements,
+            predictions: measurements.predictions,
             loading: false
         });
     }
@@ -41,7 +42,8 @@ class Predict extends PureComponent {
         const w = await this.setState({hour: h, loading: true})
         const measurements = await this.getMeasurements(this.state.date)
         this.setState({
-            measurements: measurements,
+            measurements: measurements.measurements,
+            predictions: measurements.predictions,
             loading: false
         });
     }
@@ -49,12 +51,13 @@ class Predict extends PureComponent {
         const w = await this.setState({minute: m, loading: true})
         const measurements = await this.getMeasurements(this.state.date)
         this.setState({
-            measurements: measurements,
+            measurements: measurements.measurements,
+            predictions: measurements.predictions,
             loading: false
         });
     }
     async getMeasurements(date){
-        var TARGET = 'measurements/?user=1&type=G'
+        var TARGET = 'predict/?user=1&type=G'
         var PARAMS = ''
         const userId = await AsyncStorage.getItem('userId');
         const time_lt = this.state.hour+":"+this.state.minute+":00"
@@ -62,13 +65,13 @@ class Predict extends PureComponent {
         PARAMS += '&date='+date + '&time__lte='+time_lt + '&time__gte='+time_gt
         console.log(PARAMS)
         var response = await fetch(GLOBALS.API_ENDPOINT+TARGET+PARAMS);
-        const measurements = await response.json();
+        let measurements = await response.json();
         return measurements
     }
     async componentDidMount(){
         const measurements = await this.getMeasurements(this.state.date, null)
         try {
-            this.setState({measurements: measurements, loading: false});
+            this.setState({measurements: measurements.measurements, predictions: measurements.predictions, loading: false});
         } catch(err) {
             console.log("Error fetching data-----------", err);
         }
@@ -133,8 +136,8 @@ class Predict extends PureComponent {
             </Card>
             <View style={styles.chart}>
                     <PlotPrediction
-                    data={this.state.measurements.filter((e) => e.type == "G")}
-                    predictions={1}
+                    data={this.state.measurements}
+                    predictions={this.state.predictions}
                     />
             </View>
 
