@@ -7,7 +7,6 @@ from random import randint
 import serial
 from datetime import datetime
 import numpy as np
-import urllib.request
 import requests
 import threading
 
@@ -71,10 +70,10 @@ class Bridge():
         self.bpm_buffer = []
 
         # delete the glucose data relative to the current day to avoid inconsistencies
-        # url = f'https://fabioiot.pythonanywhere.com/api/measurements/?date={date}'
-        # r = requests.delete(url)
-        # print(r.text)
-        # print(r.status_code)
+        url = f'https://fabioiot.pythonanywhere.com/api/testdelete/?date={self.date}'
+        r = requests.delete(url)
+        print(r.text)
+        print(r.status_code)
 
         # start the periodic sending of glucose data
         self.rt = RepeatedTimer(300, self.sendGlucose, 0, self.date)
