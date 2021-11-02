@@ -105,7 +105,7 @@ def PredictView(request):
     
     model = ARIMA(df, order=(2,1,2))
     model_fit = model.fit()
-    predictions = model_fit.forecast(6)
+    predictions = model_fit.forecast(12)
     
     measurements = [{
         'time': m.time,
