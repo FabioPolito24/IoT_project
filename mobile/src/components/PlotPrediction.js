@@ -50,10 +50,6 @@ export default class PlotPrediction extends PureComponent {
         for (i = 0; i < times.length; ++i){
             if (i >= times.length -  this.props.predictions.length){
                 values[i] = last_val
-                console.log(i)
-                console.log(times.length - i)
-                console.log(times[i])
-                console.log(this.props.predictions[times.length - i])
                 pred_values[i] = this.props.predictions[ this.props.predictions.length - (times.length - i)].value
                 data_pred.push({
                     'time': times[i],
@@ -68,22 +64,11 @@ export default class PlotPrediction extends PureComponent {
             }
         }
 
-        const boundaries = [0, 60, 250, 270]
+        const boundaries = [60, 250]
         var b;
-        for(var j=0; j<4; j++){
-            var color;
-            if (j == 0 | j == 3){
-                color = GLOBALS.COLOR.WHITE
-            }
-            else{
-                color = GLOBALS.COLOR.DANGER
-            }
-            if (j == 0){
-                b = Array(288).fill(null).map((u, i) => i)
-            }
-            else{
-                b = Array(288).fill(null).map((u, i) => boundaries[j])
-            }
+        for(var j=0; j<2; j++){
+            var color = GLOBALS.COLOR.DANGER
+            b = Array(288).fill(null).map((u, i) => boundaries[j])
             datasets.push({
                 data: b,
                 fill: false,

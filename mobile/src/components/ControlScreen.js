@@ -30,6 +30,7 @@ class Home extends PureComponent {
         this.setState({ search: search});
     }
 	async search(){
+	    const w = await this.setState({loading: true})
         var TARGET = 'measurements/?user=1'
         var PARAMS = '&tag='+this.state.search
         const userId = await AsyncStorage.getItem('userId');
@@ -38,7 +39,7 @@ class Home extends PureComponent {
         TARGET = 'tags/?user=1'
         var response = await fetch(GLOBALS.API_ENDPOINT+TARGET+PARAMS);
         const tags = await response.json();
-        this.setState({measurements: measurements, tags: tags})
+        this.setState({measurements: measurements, tags: tags, loading: false})
 	}
     async getMeasurements(startDate, endDate){
         var TARGET = 'measurements/?user=1'
