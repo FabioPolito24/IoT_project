@@ -77,7 +77,7 @@ class Bridge():
         print(r.status_code)
 
         # start the periodic sending of glucose data
-        self.rt = RepeatedTimer(10, self.sendGlucose, 0, self.date)
+        self.rt = RepeatedTimer(1, self.sendGlucose, 0, self.date)
         print('Date from which we are getting the glucose data to send')
         print(self.date)
 
@@ -125,12 +125,7 @@ class Bridge():
 
     def sendGlucose(self, i, date):
         try:
-            try:
-                row = self.data.iloc[i]
-            except IndexError:
-                print("Finished sending Glucose data!")
-                self.rt.stop()
-
+            row = self.data.iloc[i]
             time = row['Time']
             type = "G"
             value = row['Sensor Glucose (mg/dL)']
@@ -145,6 +140,9 @@ class Bridge():
             print(r.json())
             print(r.status_code)
             print('-' * 10)
+        except IndexError:
+            print("Finished sending Glucose data!")
+            self.rt.stop()
         except:
             # controlla se si riesce a prendere l'eccezione dell'iloc a in caso stoppa il tutto
             print("Server non raggiungibile glucose")
