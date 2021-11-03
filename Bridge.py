@@ -56,6 +56,7 @@ class Bridge():
         self.data = self.data[self.data['Date'] == sample]
         now = datetime.now()
         self.date = now.strftime("%Y-%m-%d")
+        self.data = self.data[::-1]
 
     def setup(self):
 
@@ -76,7 +77,9 @@ class Bridge():
         print(r.status_code)
 
         # start the periodic sending of glucose data
-        self.rt = RepeatedTimer(300, self.sendGlucose, 0, self.date)
+        self.rt = RepeatedTimer(10, self.sendGlucose, 0, self.date)
+        print('Date from which we are getting the glucose data to send')
+        print(self.date)
 
     def loop(self):
         # infinite loop
@@ -122,11 +125,18 @@ class Bridge():
 
     def sendGlucose(self, i, date):
         try:
-            row = self.data.iloc[i]
+            try:
+                row = self.data.iloc[i]
+            except IndexError:
+                print("Finished sending Glucose data!")
+                self.rt.stop()
+
             time = row['Time']
             type = "G"
             value = row['Sensor Glucose (mg/dL)']
             user = 1
+
+
 
             payload = {'date': date, 'time': time, 'type': type, 'value': value, 'user': user}
             url = 'https://fabioiot.pythonanywhere.com/api/measurements/'
@@ -136,6 +146,7 @@ class Bridge():
             print(r.status_code)
             print('-' * 10)
         except:
+            # controlla se si riesce a prendere l'eccezione dell'iloc a in caso stoppa il tutto
             print("Server non raggiungibile glucose")
             print('-' * 10)
             print(r.status_code)
